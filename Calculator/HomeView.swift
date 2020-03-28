@@ -31,7 +31,7 @@ struct HomeView: View {
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Text(currentButton)
-                                .foregroundColor(Color.white).frame(width: 100, height: 100).background(Color.orange).cornerRadius(75)
+                                .foregroundColor(Color.white).frame(width: generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
                         }
                     }
                 }
@@ -45,4 +45,11 @@ struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
         HomeView()
     }
+}
+
+func generateWidth(button: String) -> CGFloat {
+    if button == "0" {
+        return 200
+    }
+    return 100
 }
