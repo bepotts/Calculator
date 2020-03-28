@@ -24,8 +24,12 @@ struct HomeView: View {
             Color.black
                 .edgesIgnoringSafeArea(.all)
             VStack{
-                Text(String(total))
-                    .foregroundColor(Color.white)
+                HStack {
+                    Spacer()
+                    Text(String(total))
+                        .foregroundColor(Color.white)
+                        .font(.system(size: 50))
+                }
                 
                 ForEach(buttons, id: \.self){ buttonRow in
                     HStack{
