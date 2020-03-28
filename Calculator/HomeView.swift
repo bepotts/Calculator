@@ -40,7 +40,7 @@ struct HomeView: View {
                     }
                 }
                 
-            }
+            }.padding(.bottom)
         }
     }
 }
