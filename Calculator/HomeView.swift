@@ -10,20 +10,32 @@ import SwiftUI
 
 var total: Int = 0
 
+let buttons = [
+    ["C", "+/-", "%", "X"],
+    ["7", "8", "9", "x"],
+    ["4", "5", "6", "-"],
+    ["1", "2", "3", "+"],
+    ["0", ".", "="],
+]
+
 struct HomeView: View {
     var body: some View {
-        ZStack{
+        ZStack(alignment: .bottom){
             Color.black
                 .edgesIgnoringSafeArea(.all)
             VStack{
                 Text(String(total))
                     .foregroundColor(Color.white)
                 
-                FifthRow()
-                ForthRow()
-                ThirdRow()
-                SecondRow()
-                FirstRow()
+                ForEach(buttons, id: \.self){ buttonRow in
+                    HStack{
+                        ForEach(buttonRow, id: \.self){ currentButton in
+                            Text(currentButton)
+                                .foregroundColor(Color.white).frame(width: 100, height: 100).background(Color.orange).cornerRadius(75)
+                        }
+                    }
+                }
+                
             }
         }
     }
