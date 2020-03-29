@@ -35,13 +35,20 @@ struct HomeView: View {
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Text(currentButton)
-                                .foregroundColor(Color.white).frame(width: generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
+                                .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
                         }
                     }
                 }
                 
             }.padding(.bottom)
         }
+    }
+    
+    func generateWidth(button: String) -> CGFloat {
+        if button == "0" {
+            return 200
+        }
+        return 100
     }
 }
 
@@ -51,9 +58,3 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-func generateWidth(button: String) -> CGFloat {
-    if button == "0" {
-        return 200
-    }
-    return 100
-}
