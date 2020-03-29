@@ -8,9 +8,9 @@
 
 import SwiftUI
 
-var total: Int = 0
+var currentVal: Int = 0
 
-let buttons = [
+let buttons: [[String]] = [
     ["C", "+/-", "%", "X"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
@@ -18,7 +18,15 @@ let buttons = [
     ["0", ".", "="],
 ]
 
+class SolutionObservable: ObservableObject {
+    @Published var finalSolution:Int = 0
+    @Published var currentVal: Int = 0
+}
+
 struct HomeView: View {
+    
+    @EnvironmentObject var solutionEnv: SolutionObservable
+    
     var body: some View {
         ZStack(alignment: .bottom){
             Color.black
@@ -26,7 +34,7 @@ struct HomeView: View {
             VStack{
                 HStack {
                     Spacer()
-                    Text(String(total))
+                    Text(String(solutionEnv.finalSolution))
                         .foregroundColor(Color.white)
                         .font(.system(size: 50))
                 }
@@ -54,7 +62,40 @@ struct HomeView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView()
+        HomeView().environmentObject(SolutionObservable())
     }
 }
+
+func addOp() -> Void {
+    // TODO
+}
+
+func subOp() -> Void {
+    // TODO
+}
+
+func divOp() -> Void {
+    // TODO
+}
+
+func multiplyOp() -> Void {
+    // TODO
+}
+
+func percentOp() -> Void {
+    // TODO
+}
+
+func clearOp() -> Void {
+    // TODO
+}
+
+func equalsOp() -> Void {
+    // TODO
+}
+
+func flipSign() -> Void {
+    // TODO
+}
+
 
