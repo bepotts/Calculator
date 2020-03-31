@@ -18,6 +18,18 @@ let buttons: [[String]] = [
     ["0", ".", "="],
 ]
 
+
+enum Operation {
+    case add
+    case subtract
+    case divide
+    case multiply
+    case percent
+    case clear
+    case changeSign
+    case equals
+}
+
 class SolutionObservable: ObservableObject {
     @Published var finalSolution:Int = 0
     @Published var currentVal: Int = 0
@@ -66,6 +78,27 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
+func operationDelegate(op: Operation) -> Void {
+    switch op {
+    case .add:
+        addOp()
+    case .subtract:
+        subOp()
+    case .divide:
+        divOp()
+    case .multiply:
+        multiplyOp()
+    case .percent:
+        percentOp()
+    case .clear:
+        clearOp()
+    case .changeSign:
+        changeSignOp()
+    case .equals:
+        equalsOp()
+    }
+}
+
 func addOp() -> Void {
     // TODO
 }
@@ -91,6 +124,10 @@ func clearOp() -> Void {
 }
 
 func equalsOp() -> Void {
+    // TODO
+}
+
+func changeSignOp() -> Void {
     // TODO
 }
 
