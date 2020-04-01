@@ -8,8 +8,6 @@
 
 import SwiftUI
 
-var currentVal: Int = 0
-
 let buttons: [[String]] = [
     ["C", "+/-", "%", "X"],
     ["7", "8", "9", "x"],
@@ -17,6 +15,8 @@ let buttons: [[String]] = [
     ["1", "2", "3", "+"],
     ["0", ".", "="],
 ]
+
+var currentPlace: Int = 0
 
 
 enum Operation {
@@ -39,6 +39,7 @@ struct HomeView: View {
     
     @EnvironmentObject var solutionEnv: SolutionObservable
     
+    
     var body: some View {
         ZStack(alignment: .bottom){
             Color.black
@@ -46,7 +47,7 @@ struct HomeView: View {
             VStack{
                 HStack {
                     Spacer()
-                    Text(String(solutionEnv.finalSolution))
+                    Text(String(solutionEnv.currentVal))
                         .foregroundColor(Color.white)
                         .font(.system(size: 50))
                 }
@@ -54,7 +55,9 @@ struct HomeView: View {
                 ForEach(buttons, id: \.self){ buttonRow in
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
-                            Text(currentButton)
+                            Button(currentButton, action: {
+                                self.testFunc(currentButton: currentButton)
+                            })
                                 .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
                         }
                     }
@@ -70,6 +73,51 @@ struct HomeView: View {
         }
         return 100
     }
+    
+    func testFunc(currentButton: String) -> Void {
+        let errorInt: Int = -1
+        let convertedInt: Int = Int(currentButton) ?? errorInt
+        
+        if convertedInt == errorInt {
+            self.operationDelegate(op: currentButton)
+        } else {
+            self.updateValue(val: convertedInt)
+        }
+    }
+    
+    func updateValue(val: Int) -> Void {
+        if currentPlace == 0 {
+            solutionEnv.currentVal = val
+            currentPlace += 1
+        } else {
+            solutionEnv.currentVal = solutionEnv.currentVal * 10 + val
+        }
+    }
+
+    func operationDelegate(op: String) -> Void {
+        print("Inside the operation delgate function")
+            
+        switch op {
+        case "+":
+            addOp()
+        case "-":
+            subOp()
+        case "/":
+            divOp()
+        case "*":
+            multiplyOp()
+        case "%":
+            percentOp()
+        case "C":
+            clearOp()
+        case "+/-":
+            changeSignOp()
+        case "=":
+            equalsOp()
+        default:
+            print("There was an error in the operation Delegate function")
+        }
+    }
 }
 
 struct HomeView_Previews: PreviewProvider {
@@ -78,61 +126,40 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-func operationDelegate(op: Operation) -> Void {
-    switch op {
-    case .add:
-        addOp()
-    case .subtract:
-        subOp()
-    case .divide:
-        divOp()
-    case .multiply:
-        multiplyOp()
-    case .percent:
-        percentOp()
-    case .clear:
-        clearOp()
-    case .changeSign:
-        changeSignOp()
-    case .equals:
-        equalsOp()
-    }
-}
-
 func addOp() -> Void {
-    // TODO
+    print("Add operation")
 }
 
 func subOp() -> Void {
-    // TODO
+    print("Subtract operation")
 }
 
 func divOp() -> Void {
-    // TODO
+    print("Divide operation")
 }
 
 func multiplyOp() -> Void {
-    // TODO
+    print("Multiply Operation")
 }
 
 func percentOp() -> Void {
-    // TODO
+    print("percent operation")
 }
 
 func clearOp() -> Void {
-    // TODO
+    print("Clear operation")
 }
 
 func equalsOp() -> Void {
-    // TODO
+    print("Equals operation")
 }
 
 func changeSignOp() -> Void {
-    // TODO
+    print("Change sign operation")
 }
 
 func flipSign() -> Void {
-    // TODO
+    print("Flip Sign operation")
 }
 
 
