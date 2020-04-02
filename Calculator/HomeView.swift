@@ -16,8 +16,8 @@ let buttons: [[String]] = [
     ["0", ".", "="],
 ]
 
-var currentPlace: Int = 0
-
+var currentPlace: Bool = true
+var previousOp: String = ""
 
 enum Operation {
     case add
@@ -79,6 +79,7 @@ struct HomeView: View {
         let convertedInt: Int = Int(currentButton) ?? errorInt
         
         if convertedInt == errorInt {
+            
             self.operationDelegate(op: currentButton)
         } else {
             self.updateValue(val: convertedInt)
@@ -86,12 +87,56 @@ struct HomeView: View {
     }
     
     func updateValue(val: Int) -> Void {
-        if currentPlace == 0 {
+        
+        if currentPlace {
             solutionEnv.currentVal = val
-            currentPlace += 1
+            currentPlace = false
         } else {
             solutionEnv.currentVal = solutionEnv.currentVal * 10 + val
         }
+    }
+    
+    func addOp() -> Void {
+        solutionEnv.finalSolution += solutionEnv.currentVal
+        currentPlace = true
+    }
+
+    func subOp() -> Void {
+        print("Subtract operation")
+    }
+
+    func divOp() -> Void {
+        print("Divide operation")
+    }
+
+    func multiplyOp() -> Void {
+        print("Multiply Operation")
+    }
+
+    func percentOp() -> Void {
+        print("percent operation")
+    }
+
+    func clearOp() -> Void {
+        currentPlace = true
+        solutionEnv.currentVal = 0
+        solutionEnv.finalSolution = 0
+    }
+
+    func equalsOp() -> Void {
+        operationDelegate(op: previousOp)
+        solutionEnv.currentVal = solutionEnv.finalSolution
+        solutionEnv.finalSolution = 0
+        currentPlace = true
+        print("Equals operation")
+    }
+
+    func changeSignOp() -> Void {
+        print("Change sign operation")
+    }
+
+    func flipSign() -> Void {
+        print("Flip Sign operation")
     }
 
     func operationDelegate(op: String) -> Void {
@@ -99,19 +144,24 @@ struct HomeView: View {
             
         switch op {
         case "+":
-            addOp()
+            previousOp = "+"
+            self.addOp()
         case "-":
-            subOp()
+            previousOp = "-"
+            self.subOp()
         case "/":
-            divOp()
+            previousOp = "/"
+            self.divOp()
         case "*":
-            multiplyOp()
+            previousOp = "*"
+            self.multiplyOp()
         case "%":
-            percentOp()
+            previousOp = "%"
+            self.percentOp()
         case "C":
-            clearOp()
+            self.clearOp()
         case "+/-":
-            changeSignOp()
+            self.changeSignOp()
         case "=":
             equalsOp()
         default:
@@ -126,40 +176,5 @@ struct HomeView_Previews: PreviewProvider {
     }
 }
 
-func addOp() -> Void {
-    print("Add operation")
-}
-
-func subOp() -> Void {
-    print("Subtract operation")
-}
-
-func divOp() -> Void {
-    print("Divide operation")
-}
-
-func multiplyOp() -> Void {
-    print("Multiply Operation")
-}
-
-func percentOp() -> Void {
-    print("percent operation")
-}
-
-func clearOp() -> Void {
-    print("Clear operation")
-}
-
-func equalsOp() -> Void {
-    print("Equals operation")
-}
-
-func changeSignOp() -> Void {
-    print("Change sign operation")
-}
-
-func flipSign() -> Void {
-    print("Flip Sign operation")
-}
 
 
