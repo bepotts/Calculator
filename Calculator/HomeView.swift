@@ -95,6 +95,7 @@ struct HomeView: View {
     
     func updateValue(val: Int) -> Void {
         
+        // Will be true when this is the first value the user punched in
         if currentPlace {
             solutionEnv.currentVal = val
             currentPlace = false
@@ -128,7 +129,6 @@ struct HomeView: View {
             solutionEnv.currentVal = solutionEnv.finalSolution
         }
         currentPlace = true
-        print("Subtract operation")
     }
 
     func divOp() -> Void {
@@ -136,6 +136,17 @@ struct HomeView: View {
     }
 
     func multiplyOp() -> Void {
+        
+        if previousOp == "=" {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+            // will be true when this is the first operation
+        } else if solutionEnv.finalSolution == Int.min {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+        } else { // Will be true when we're actually trying to calculate the difference
+            solutionEnv.finalSolution *= solutionEnv.currentVal
+            solutionEnv.currentVal = solutionEnv.finalSolution
+        }
+        currentPlace = true
         print("Multiply Operation")
     }
 
@@ -187,8 +198,8 @@ struct HomeView: View {
         case "/":
             previousOp = "/"
             self.divOp()
-        case "*":
-            previousOp = "*"
+        case "x":
+            previousOp = "x"
             self.multiplyOp()
         case "%":
             previousOp = "%"
