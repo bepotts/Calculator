@@ -19,6 +19,7 @@ let buttons: [[String]] = [
 var currentPlace: Bool = true
 var previousOp: String = ""
 var equalsBefore: Bool = false
+var previousButton: String = ""
 
 enum Operation {
     case add
@@ -32,7 +33,7 @@ enum Operation {
 }
 
 class SolutionObservable: ObservableObject {
-    @Published var finalSolution:Int = 0
+    @Published var finalSolution:Int = Int.min
     @Published var currentVal: Int = 0
 }
 
@@ -80,11 +81,16 @@ struct HomeView: View {
         let convertedInt: Int = Int(currentButton) ?? errorInt
         
         if convertedInt == errorInt {
-            
+            // This is to ignore input from user that hit the same button over and over again
+            if currentButton == previousButton {
+                return
+            }
             self.operationDelegate(op: currentButton)
         } else {
             self.updateValue(val: convertedInt)
         }
+        
+        previousButton = currentButton
     }
     
     func updateValue(val: Int) -> Void {
@@ -101,6 +107,9 @@ struct HomeView: View {
         
         if previousOp == "=" {
             solutionEnv.finalSolution = solutionEnv.currentVal
+            // Will be true when this is the first operation
+        } else if solutionEnv.finalSolution == Int.min {
+            solutionEnv.finalSolution = solutionEnv.currentVal
         } else {
             solutionEnv.finalSolution += solutionEnv.currentVal
         }
@@ -108,6 +117,17 @@ struct HomeView: View {
     }
 
     func subOp() -> Void {
+        
+        if previousOp == "=" {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+            // will be true when this is the first operation
+        } else if solutionEnv.finalSolution == Int.min {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+        } else { // Will be true when we're actually trying to calculate the difference
+            solutionEnv.finalSolution -= solutionEnv.currentVal
+            solutionEnv.currentVal = solutionEnv.finalSolution
+        }
+        currentPlace = true
         print("Subtract operation")
     }
 
@@ -126,11 +146,12 @@ struct HomeView: View {
     func clearOp() -> Void {
         currentPlace = true
         solutionEnv.currentVal = 0
-        solutionEnv.finalSolution = 0
+        solutionEnv.finalSolution = Int.min
     }
 
     func equalsOp() -> Void {
         operationDelegate(op: previousOp)
+        print("This is the solution after the operation: \(solutionEnv.finalSolution)")
         solutionEnv.currentVal = solutionEnv.finalSolution
         solutionEnv.finalSolution = 0
         currentPlace = true
@@ -148,6 +169,13 @@ struct HomeView: View {
 
     func operationDelegate(op: String) -> Void {
         print("Inside the operation delgate function")
+        
+        // Will be true when the user is trying to use the previous solution as the basis for a new equation
+        if previousOp == "="  && op != "="{
+            solutionEnv.finalSolution = solutionEnv.currentVal
+            previousOp = op
+            return
+        }
             
         switch op {
         case "+":
