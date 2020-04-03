@@ -18,6 +18,7 @@ let buttons: [[String]] = [
 
 var currentPlace: Bool = true
 var previousOp: String = ""
+var equalsBefore: Bool = false
 
 enum Operation {
     case add
@@ -97,7 +98,12 @@ struct HomeView: View {
     }
     
     func addOp() -> Void {
-        solutionEnv.finalSolution += solutionEnv.currentVal
+        
+        if previousOp == "=" {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+        } else {
+            solutionEnv.finalSolution += solutionEnv.currentVal
+        }
         currentPlace = true
     }
 
@@ -128,6 +134,7 @@ struct HomeView: View {
         solutionEnv.currentVal = solutionEnv.finalSolution
         solutionEnv.finalSolution = 0
         currentPlace = true
+        previousOp = "="
         print("Equals operation")
     }
 
