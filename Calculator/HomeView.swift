@@ -111,17 +111,7 @@ struct HomeView: View {
     }
     
     func subOp() -> Void {
-        
-        if previousOp == "=" {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-            // will be true when this is the first operation
-        } else if solutionEnv.finalSolution == Int.min {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-        } else { // Will be true when we're actually trying to calculate the difference
-            solutionEnv.finalSolution -= solutionEnv.currentVal
-            solutionEnv.currentVal = solutionEnv.finalSolution
-        }
-        currentPlace = true
+        solutionEnv.finalSolution -= solutionEnv.currentVal
     }
     
     func divOp() -> Void {
@@ -169,7 +159,7 @@ struct HomeView: View {
         operationDelegate(op: previousOp)
         print("This is the solution after the operation: \(solutionEnv.finalSolution)")
         solutionEnv.currentVal = solutionEnv.finalSolution
-        solutionEnv.finalSolution = 0
+        solutionEnv.finalSolution = Int.min
         currentPlace = true
         previousOp = "="
         print("Equals operation")
