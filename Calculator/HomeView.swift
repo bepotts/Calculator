@@ -37,8 +37,8 @@ enum Operation {
 }
 
 class SolutionObservable: ObservableObject {
-    @Published var finalSolution:Int = Int.min
-    @Published var currentVal: Int = 0
+    @Published var finalSolution: Double = Double(Int.min)
+    @Published var currentVal: Double = 0
 }
 
 struct HomeView: View {
@@ -93,8 +93,8 @@ struct HomeView: View {
     }
     
     func testFunc(currentButton: String) -> Void {
-        let errorInt: Int = -1
-        let convertedInt: Int = Int(currentButton) ?? errorInt
+        let errorInt: Double = -1
+        let convertedInt: Double = Double(currentButton) ?? errorInt
         
         if convertedInt == errorInt {
             // This is to ignore input from user that hit the same button over and over again
@@ -109,7 +109,7 @@ struct HomeView: View {
         previousButton = currentButton
     }
     
-    func updateValue(val: Int) -> Void {
+    func updateValue(val: Double) -> Void {
         
         // Will be true when this is the first value the user punched in
         if numStartFromBegining {
@@ -143,7 +143,7 @@ struct HomeView: View {
     func clearOp() -> Void {
         numStartFromBegining = true
         solutionEnv.currentVal = 0
-        solutionEnv.finalSolution = Int.min
+        solutionEnv.finalSolution = Double(Int.min)
         previousOp = ""
     }
     
@@ -151,7 +151,7 @@ struct HomeView: View {
         operationDelegate(op: previousOp)
         print("This is the solution after the operation: \(solutionEnv.finalSolution)")
         solutionEnv.currentVal = solutionEnv.finalSolution
-        solutionEnv.finalSolution = Int.min
+        solutionEnv.finalSolution = Double(Int.min)
         numStartFromBegining = true
         previousOp = "="
         print("Equals operation")
@@ -179,7 +179,7 @@ struct HomeView: View {
             previousOp = op
             return
             // Will be true if the user has not entered a value and hit an operation
-        } else if solutionEnv.finalSolution == Int.min && solutionEnv.currentVal == 0 {
+        } else if solutionEnv.finalSolution == Double(Int.min) && solutionEnv.currentVal == 0 {
             return
         }
         
@@ -194,7 +194,7 @@ struct HomeView: View {
             previousOp = op
             numStartFromBegining = true
             // Will be true when the user input the first number in an operation
-            if solutionEnv.finalSolution == Int.min {
+            if solutionEnv.finalSolution == Double(Int.min) {
                 solutionEnv.finalSolution = solutionEnv.currentVal
             } else if op == "+"{
                 self.addOp()
