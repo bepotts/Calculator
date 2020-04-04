@@ -21,6 +21,10 @@ var previousOp: String = ""
 var equalsBefore: Bool = false
 var previousButton: String = ""
 
+// Sets up the color groupings
+let lightGrayButtons: [String] = ["C", "+/-", "%"]
+let orangeButtons: [String] = ["/", "x", "-", "+", "="]
+
 enum Operation {
     case add
     case subtract
@@ -61,7 +65,7 @@ struct HomeView: View {
                                 self.testFunc(currentButton: currentButton)
                             }, label: {
                                 Text(currentButton)
-                                    .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
+                                    .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(self.colorSelector(currentButton: currentButton)).cornerRadius(75)
                             })
                         }
                     }
@@ -69,6 +73,16 @@ struct HomeView: View {
                 
             }.padding(.bottom)
         }
+    }
+    
+    func colorSelector(currentButton: String) -> Color{
+        if lightGrayButtons.contains(currentButton){
+            return Color.blue
+        }
+        if orangeButtons.contains(currentButton){
+            return Color.orange
+        }
+        return Color.green
     }
     
     func generateWidth(button: String) -> CGFloat {
