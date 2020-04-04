@@ -61,7 +61,7 @@ struct HomeView: View {
                                 self.testFunc(currentButton: currentButton)
                             }, label: {
                                 Text(currentButton)
-                                .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
+                                    .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
                             })
                         }
                     }
@@ -107,16 +107,7 @@ struct HomeView: View {
     }
     
     func addOp() -> Void {
-        
-        if previousOp == "=" {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-            // Will be true when this is the first operation
-        } else if solutionEnv.finalSolution == Int.min {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-        } else {
-            solutionEnv.finalSolution += solutionEnv.currentVal
-        }
-        currentPlace = true
+        solutionEnv.finalSolution += solutionEnv.currentVal
     }
     
     func subOp() -> Void {
@@ -171,6 +162,7 @@ struct HomeView: View {
         currentPlace = true
         solutionEnv.currentVal = 0
         solutionEnv.finalSolution = Int.min
+        previousOp = ""
     }
     
     func equalsOp() -> Void {
@@ -194,37 +186,45 @@ struct HomeView: View {
     func operationDelegate(op: String) -> Void {
         print("Inside the operation delgate function")
         
+        if op == "C" {
+            self.clearOp()
+            return
+        }
+        
         // Will be true when the user is trying to use the previous solution as the basis for a new equation
         if previousOp == "="  && op != "="{
             solutionEnv.finalSolution = solutionEnv.currentVal
             previousOp = op
             return
+            // Will be true if the user has not entered a value and hit an operation
+        } else if solutionEnv.finalSolution == Int.min && solutionEnv.currentVal == 0 {
+            return
         }
         
         switch op {
-        case "+":
-            previousOp = "+"
-            self.addOp()
-        case "-":
-            previousOp = "-"
-            self.subOp()
-        case "/":
-            previousOp = "/"
-            self.divOp()
-        case "x":
-            previousOp = "x"
-            self.multiplyOp()
-        case "%":
-            previousOp = "%"
-            self.percentOp()
-        case "C":
-            self.clearOp()
         case "+/-":
             self.changeSignOp()
         case "=":
             equalsOp()
+        // Default triggers when doing a math operation
         default:
-            print("There was an error in the operation Delegate function")
+            print("Looks like we're performing a mathematical operation")
+            previousOp = op
+            currentPlace = true
+            // Will be true when the user input the first number in an operation
+            if solutionEnv.finalSolution == Int.min {
+                solutionEnv.finalSolution = solutionEnv.currentVal
+            } else if op == "+"{
+                self.addOp()
+            } else if op == "-" {
+                self.subOp()
+            } else if op == "/" {
+                self.divOp()
+            } else if op == "x" {
+                self.multiplyOp()
+            } else if op == "%" {
+                self.percentOp()
+            }
         }
     }
 }
