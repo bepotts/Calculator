@@ -9,7 +9,7 @@
 import SwiftUI
 
 let buttons: [[String]] = [
-    ["C", "+/-", "%", "X"],
+    ["C", "+/-", "%", "/"],
     ["7", "8", "9", "x"],
     ["4", "5", "6", "-"],
     ["1", "2", "3", "+"],
@@ -116,7 +116,7 @@ struct HomeView: View {
         }
         currentPlace = true
     }
-
+    
     func subOp() -> Void {
         
         if previousOp == "=" {
@@ -130,11 +130,22 @@ struct HomeView: View {
         }
         currentPlace = true
     }
-
+    
     func divOp() -> Void {
+        
+        if previousOp == "=" {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+            // will be true when this is the first operation
+        } else if solutionEnv.finalSolution == Int.min {
+            solutionEnv.finalSolution = solutionEnv.currentVal
+        } else { // Will be true when we're actually trying to calculate the difference
+            solutionEnv.finalSolution /= solutionEnv.currentVal
+            solutionEnv.currentVal = solutionEnv.finalSolution
+        }
+        currentPlace = true
         print("Divide operation")
     }
-
+    
     func multiplyOp() -> Void {
         
         if previousOp == "=" {
@@ -149,17 +160,17 @@ struct HomeView: View {
         currentPlace = true
         print("Multiply Operation")
     }
-
+    
     func percentOp() -> Void {
         print("percent operation")
     }
-
+    
     func clearOp() -> Void {
         currentPlace = true
         solutionEnv.currentVal = 0
         solutionEnv.finalSolution = Int.min
     }
-
+    
     func equalsOp() -> Void {
         operationDelegate(op: previousOp)
         print("This is the solution after the operation: \(solutionEnv.finalSolution)")
@@ -169,15 +180,15 @@ struct HomeView: View {
         previousOp = "="
         print("Equals operation")
     }
-
+    
     func changeSignOp() -> Void {
         print("Change sign operation")
     }
-
+    
     func flipSign() -> Void {
         print("Flip Sign operation")
     }
-
+    
     func operationDelegate(op: String) -> Void {
         print("Inside the operation delgate function")
         
@@ -187,7 +198,7 @@ struct HomeView: View {
             previousOp = op
             return
         }
-            
+        
         switch op {
         case "+":
             previousOp = "+"
