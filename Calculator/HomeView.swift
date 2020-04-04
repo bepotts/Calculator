@@ -16,7 +16,7 @@ let buttons: [[String]] = [
     ["0", ".", "="],
 ]
 
-var currentPlace: Bool = true
+var numStartFromBegining: Bool = true
 var previousOp: String = ""
 var equalsBefore: Bool = false
 var previousButton: String = ""
@@ -98,9 +98,9 @@ struct HomeView: View {
     func updateValue(val: Int) -> Void {
         
         // Will be true when this is the first value the user punched in
-        if currentPlace {
+        if numStartFromBegining {
             solutionEnv.currentVal = val
-            currentPlace = false
+            numStartFromBegining = false
         } else {
             solutionEnv.currentVal = solutionEnv.currentVal * 10 + val
         }
@@ -115,33 +115,11 @@ struct HomeView: View {
     }
     
     func divOp() -> Void {
-        
-        if previousOp == "=" {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-            // will be true when this is the first operation
-        } else if solutionEnv.finalSolution == Int.min {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-        } else { // Will be true when we're actually trying to calculate the difference
-            solutionEnv.finalSolution /= solutionEnv.currentVal
-            solutionEnv.currentVal = solutionEnv.finalSolution
-        }
-        currentPlace = true
-        print("Divide operation")
+        solutionEnv.finalSolution /= solutionEnv.currentVal
     }
     
     func multiplyOp() -> Void {
-        
-        if previousOp == "=" {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-            // will be true when this is the first operation
-        } else if solutionEnv.finalSolution == Int.min {
-            solutionEnv.finalSolution = solutionEnv.currentVal
-        } else { // Will be true when we're actually trying to calculate the difference
-            solutionEnv.finalSolution *= solutionEnv.currentVal
-            solutionEnv.currentVal = solutionEnv.finalSolution
-        }
-        currentPlace = true
-        print("Multiply Operation")
+        solutionEnv.finalSolution *= solutionEnv.currentVal
     }
     
     func percentOp() -> Void {
@@ -149,7 +127,7 @@ struct HomeView: View {
     }
     
     func clearOp() -> Void {
-        currentPlace = true
+        numStartFromBegining = true
         solutionEnv.currentVal = 0
         solutionEnv.finalSolution = Int.min
         previousOp = ""
@@ -160,7 +138,7 @@ struct HomeView: View {
         print("This is the solution after the operation: \(solutionEnv.finalSolution)")
         solutionEnv.currentVal = solutionEnv.finalSolution
         solutionEnv.finalSolution = Int.min
-        currentPlace = true
+        numStartFromBegining = true
         previousOp = "="
         print("Equals operation")
     }
@@ -200,7 +178,7 @@ struct HomeView: View {
         default:
             print("Looks like we're performing a mathematical operation")
             previousOp = op
-            currentPlace = true
+            numStartFromBegining = true
             // Will be true when the user input the first number in an operation
             if solutionEnv.finalSolution == Int.min {
                 solutionEnv.finalSolution = solutionEnv.currentVal
