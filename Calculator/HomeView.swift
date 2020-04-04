@@ -57,10 +57,12 @@ struct HomeView: View {
                 ForEach(buttons, id: \.self){ buttonRow in
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
-                            Button(currentButton, action: {
+                            Button(action: {
                                 self.testFunc(currentButton: currentButton)
-                            })
+                            }, label: {
+                                Text(currentButton)
                                 .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(Color.orange).cornerRadius(75)
+                            })
                         }
                     }
                 }
