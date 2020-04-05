@@ -47,6 +47,15 @@ extension Color {
     static let darkGray = Color(red: 0.2, green: 0.2, blue: 0.2)
 }
 
+extension Double {
+    func truncate(maxDigits: Int = 2)-> String {
+        let formatter = NumberFormatter()
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = maxDigits
+        return formatter.string(from: self as NSNumber) ?? "error"
+    }
+}
+
 struct HomeView: View {
     
     @EnvironmentObject var solutionEnv: SolutionObservable
@@ -59,7 +68,7 @@ struct HomeView: View {
             VStack{
                 HStack {
                     Spacer()
-                    Text(String(solutionEnv.currentVal))
+                    Text(solutionEnv.currentVal.truncate(maxDigits: 8))
                         .foregroundColor(Color.white)
                         .font(.system(size: 50))
                 }
