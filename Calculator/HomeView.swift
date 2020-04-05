@@ -89,7 +89,9 @@ struct HomeView: View {
                                 self.testFunc(currentButton: currentButton)
                             }, label: {
                                 Text(currentButton)
-                                    .foregroundColor(Color.white).frame(width: self.generateWidth(button: currentButton), height: 100).background(self.colorSelector(currentButton: currentButton)).cornerRadius(75)
+                                    .foregroundColor(Color.white)
+                                    .frame(width: self.generateWidth(button: currentButton), height: 100)
+                                    .background(self.colorSelector(currentButton: currentButton)).cornerRadius(75)
                             })
                         }
                     }
@@ -122,7 +124,7 @@ struct HomeView: View {
         
         if convertedInt == errorInt {
             // This is to ignore input from user that hit the same button over and over again
-            if currentButton == previousButton {
+            if currentButton == previousButton  && currentButton != "+/-"{
                 return
             }
             do {
@@ -191,11 +193,12 @@ struct HomeView: View {
     }
     
     func changeSignOp() -> Void {
-        print("Change sign operation")
-    }
-    
-    func flipSign() -> Void {
-        print("Flip Sign operation")
+        
+        if solutionEnv.currentVal > 0 {
+            solutionEnv.currentVal = 0 - solutionEnv.currentVal
+        } else {
+            solutionEnv.currentVal = abs(solutionEnv.currentVal)
+        }
     }
     
     func operationDelegate(op: String) throws ->  Void {
