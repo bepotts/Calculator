@@ -1,6 +1,8 @@
-A Simple Calculator
+iOS Calculator Clone
 ==========
 
-This app was created to learn Swift UI
+A clone of the default Calculator app found installed on iOS. 
+
+This project is being used as my introduction to iOS development.
 
 
