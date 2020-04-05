@@ -39,6 +39,11 @@ enum Operation {
 class SolutionObservable: ObservableObject {
     @Published var finalSolution: Double = Double(Int.min)
     @Published var currentVal: Double = 0
+    
+    func reset() -> Void {
+        finalSolution = Double(Int.min)
+        currentVal = 0
+    }
 }
 
 // Adds the button colors from the Calculator app
@@ -54,6 +59,10 @@ extension Double {
         formatter.maximumFractionDigits = maxDigits
         return formatter.string(from: self as NSNumber) ?? "error"
     }
+}
+
+enum InputError: Error {
+    case invalidInput(String)
 }
 
 struct HomeView: View {
@@ -116,7 +125,12 @@ struct HomeView: View {
             if currentButton == previousButton {
                 return
             }
-            self.operationDelegate(op: currentButton)
+            do {
+                try self.operationDelegate(op: currentButton)
+            } catch {
+                let errorMessage: String = "Operation Delegate recieved an input that it didn't know what to do with"
+                fatalError(errorMessage)
+            }
         } else {
             self.updateValue(val: convertedInt)
         }
@@ -152,18 +166,22 @@ struct HomeView: View {
     }
     
     func percentOp() -> Void {
-        print("percent operation")
+        solutionEnv.currentVal /= 100
     }
     
     func clearOp() -> Void {
         numStartFromBegining = true
-        solutionEnv.currentVal = 0
-        solutionEnv.finalSolution = Double(Int.min)
+        solutionEnv.reset()
         previousOp = ""
     }
     
     func equalsOp() -> Void {
-        operationDelegate(op: previousOp)
+        do {
+            try operationDelegate(op: previousOp)
+        } catch {
+            let errorMessage: String = "Operation Delegate recieved an operation that it didn't know what to do with"
+            fatalError(errorMessage)
+        }
         print("This is the solution after the operation: \(solutionEnv.finalSolution)")
         solutionEnv.currentVal = solutionEnv.finalSolution
         solutionEnv.finalSolution = Double(Int.min)
@@ -180,7 +198,7 @@ struct HomeView: View {
         print("Flip Sign operation")
     }
     
-    func operationDelegate(op: String) -> Void {
+    func operationDelegate(op: String) throws ->  Void {
         print("Inside the operation delgate function")
         
         if op == "C" {
@@ -201,6 +219,9 @@ struct HomeView: View {
         switch op {
         case "+/-":
             self.changeSignOp()
+        case "%":
+            print("We are about to run the percent op")
+            self.percentOp()
         case "=":
             equalsOp()
         // Default triggers when doing a math operation
@@ -219,8 +240,8 @@ struct HomeView: View {
                 self.divOp()
             } else if op == "x" {
                 self.multiplyOp()
-            } else if op == "%" {
-                self.percentOp()
+            } else {
+                throw InputError.invalidInput(op)
             }
         }
     }
