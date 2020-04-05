@@ -41,6 +41,12 @@ class SolutionObservable: ObservableObject {
     @Published var currentVal: Double = 0
 }
 
+// Adds the button colors from the Calculator app
+extension Color {
+    static let lightGray = Color(red: 0.6, green: 0.6, blue: 0.6)
+    static let darkGray = Color(red: 0.2, green: 0.2, blue: 0.2)
+}
+
 struct HomeView: View {
     
     @EnvironmentObject var solutionEnv: SolutionObservable
@@ -77,12 +83,12 @@ struct HomeView: View {
     
     func colorSelector(currentButton: String) -> Color{
         if lightGrayButtons.contains(currentButton){
-            return Color.blue
+            return Color.lightGray
         }
         if orangeButtons.contains(currentButton){
             return Color.orange
         }
-        return Color.green
+        return Color.darkGray
     }
     
     func generateWidth(button: String) -> CGFloat {
