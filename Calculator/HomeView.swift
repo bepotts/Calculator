@@ -149,49 +149,83 @@ struct HomeView: View {
                 fatalError(errorMessage)
             }
         } else {
-            self.updateDisplayVal(val: convertedInt)
+            self.updateDisplayVal(clickedVal: convertedInt)
         }
         
         previousButton = buttonLabel
     }
     
-    func updateDisplayVal(val: Double) -> Void {
+    /**
+     Updates the number being displayed. Called after a user hits a number button
+     - Parameter clickedVal: the value of the button that was just clicked
+     - Returns: Void
+     */
+    func updateDisplayVal(clickedVal: Double) -> Void {
         
         // Will be true when this is the first value the user punched in
         if numStartFromBegining {
-            numObservable.displayVal = val
+            numObservable.displayVal = clickedVal
             numStartFromBegining = false
         } else {
-            numObservable.displayVal = numObservable.displayVal * 10 + val
+            numObservable.displayVal = numObservable.displayVal * 10 + clickedVal
         }
     }
     
+    /**
+     Performs the "addition" operation
+     - Returns: Void
+     */
     func addOperation() -> Void {
         numObservable.finalSolution += numObservable.displayVal
     }
     
+    /**
+     Performs the "subtraction" operation
+     - Returns: Void
+     */
     func subtractOperation() -> Void {
         numObservable.finalSolution -= numObservable.displayVal
     }
     
+    /**
+     Peforms the "division" operation
+     - Returns: Void
+     */
     func divideOperation() -> Void {
         numObservable.finalSolution /= numObservable.displayVal
     }
     
+    /**
+     Performs the "multiplication" operation
+     - Returns: Void
+     */
     func multiplyOperation() -> Void {
         numObservable.finalSolution *= numObservable.displayVal
     }
     
+    /**
+     Performs the "percent" operation.
+     This changes the displayed value to an equivalent percentage value
+     - Returns: Void
+     */
     func percentOperation() -> Void {
         numObservable.displayVal /= 100
     }
     
+    /**
+     Performs the "clear" operation
+     - Returns: Void
+     */
     func clearOperation() -> Void {
         numStartFromBegining = true
         numObservable.reset()
         previousOp = ""
     }
     
+    /**
+     Performs the "equals" operation.
+     - Returns: Void
+     */
     func equalsOperation() -> Void {
         do {
             try operationDelegate(opLabel: previousOp)
