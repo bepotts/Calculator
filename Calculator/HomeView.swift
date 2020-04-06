@@ -8,6 +8,8 @@
 
 import SwiftUI
 
+
+/// Represents the layout of the calculator buttons
 let buttons: [[String]] = [
     ["C", "+/-", "%", "/"],
     ["7", "8", "9", "x"],
@@ -16,26 +18,19 @@ let buttons: [[String]] = [
     ["0", ".", "="],
 ]
 
+/// Determines whether the display  value should update at 10^0 or higher
 var numStartFromBegining: Bool = true
+/// Stores the value of the previous operation
 var previousOp: String = ""
-var equalsBefore: Bool = false
+/// Stores the value of the previous pushed button
 var previousButton: String = ""
 
-// Sets up the color groupings
+/// Buttons that are light gray
 let lightGrayButtons: [String] = ["C", "+/-", "%"]
+/// Buttons that are orange
 let orangeButtons: [String] = ["/", "x", "-", "+", "="]
 
-enum Operation {
-    case add
-    case subtract
-    case divide
-    case multiply
-    case percent
-    case clear
-    case changeSign
-    case equals
-}
-
+/// Observable class that encapsulates the values that our math is performed on
 class NumObservable: ObservableObject {
     @Published var finalSolution: Double = Double(Int.min)
     @Published var displayVal: Double = 0
@@ -46,7 +41,6 @@ class NumObservable: ObservableObject {
     }
 }
 
-// Adds the button colors from the Calculator app
 extension Color {
     static let lightGray = Color(red: 0.6, green: 0.6, blue: 0.6)
     static let darkGray = Color(red: 0.2, green: 0.2, blue: 0.2)
@@ -61,6 +55,7 @@ extension Double {
     }
 }
 
+/// Error enum that is used for when an unknown value is being processed
 enum InputError: Error {
     case invalidInput(String)
 }
