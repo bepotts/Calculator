@@ -36,13 +36,13 @@ enum Operation {
     case equals
 }
 
-class SolutionObservable: ObservableObject {
+class NumObservable: ObservableObject {
     @Published var finalSolution: Double = Double(Int.min)
-    @Published var currentVal: Double = 0
+    @Published var displayVal: Double = 0
     
     func reset() -> Void {
         finalSolution = Double(Int.min)
-        currentVal = 0
+        displayVal = 0
     }
 }
 
@@ -67,7 +67,7 @@ enum InputError: Error {
 
 struct HomeView: View {
     
-    @EnvironmentObject var solutionEnv: SolutionObservable
+    @EnvironmentObject var numObservable: NumObservable
     
     
     var body: some View {
@@ -77,7 +77,7 @@ struct HomeView: View {
             VStack{
                 HStack {
                     Spacer()
-                    Text(solutionEnv.currentVal.truncate(maxDigits: 8))
+                    Text(numObservable.displayVal.truncate(maxDigits: 8))
                         .foregroundColor(Color.white)
                         .font(.system(size: 50))
                 }
@@ -86,12 +86,12 @@ struct HomeView: View {
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Button(action: {
-                                self.testFunc(currentButton: currentButton)
+                                self.updateOrOperationDelegate(buttonLabel: currentButton)
                             }, label: {
                                 Text(currentButton)
                                     .foregroundColor(Color.white)
-                                    .frame(width: self.generateWidth(button: currentButton), height: 100)
-                                    .background(self.colorSelector(currentButton: currentButton)).cornerRadius(75)
+                                    .frame(width: self.generateWidth(buttonLabel: currentButton), height: 100)
+                                    .background(self.colorSelector(buttonLabel: currentButton)).cornerRadius(75)
                             })
                         }
                     }
@@ -100,151 +100,176 @@ struct HomeView: View {
             }.padding(.bottom)
         }
     }
-    
-    func colorSelector(currentButton: String) -> Color{
-        if lightGrayButtons.contains(currentButton){
+
+    /**
+     Returns the color of a button based on the value of buttonText
+     - Parameter buttonText: label of the button
+     - Returns: Color of the buttonLabel
+     */
+    func colorSelector(buttonLabel: String) -> Color{
+        if lightGrayButtons.contains(buttonLabel){
             return Color.lightGray
         }
-        if orangeButtons.contains(currentButton){
+        if orangeButtons.contains(buttonLabel){
             return Color.orange
         }
         return Color.darkGray
     }
     
-    func generateWidth(button: String) -> CGFloat {
-        if button == "0" {
+    /**
+     Returns the width of a button based on that button's label
+     - Parameter buttonLabel: label of the button
+     - Returns: width of the given button
+     */
+    func generateWidth(buttonLabel: String) -> CGFloat {
+        if buttonLabel == "0" {
             return 200
         }
         return 100
     }
     
-    func testFunc(currentButton: String) -> Void {
+    /**
+     Updates the display text or performs and operation, based on the given text
+     - Parameter buttonLabel: label of the pressed button
+     - Returns: Void
+     */
+    func updateOrOperationDelegate(buttonLabel: String) -> Void {
         let errorInt: Double = -1
-        let convertedInt: Double = Double(currentButton) ?? errorInt
+        let convertedInt: Double = Double(buttonLabel) ?? errorInt
         
         if convertedInt == errorInt {
             // This is to ignore input from user that hit the same button over and over again
-            if currentButton == previousButton  && currentButton != "+/-"{
+            if buttonLabel == previousButton  && buttonLabel != "+/-"{
                 return
             }
             do {
-                try self.operationDelegate(op: currentButton)
+                try self.operationDelegate(opLabel: buttonLabel)
             } catch {
                 let errorMessage: String = "Operation Delegate recieved an input that it didn't know what to do with"
                 fatalError(errorMessage)
             }
         } else {
-            self.updateValue(val: convertedInt)
+            self.updateDisplayVal(val: convertedInt)
         }
         
-        previousButton = currentButton
+        previousButton = buttonLabel
     }
     
-    func updateValue(val: Double) -> Void {
+    func updateDisplayVal(val: Double) -> Void {
         
         // Will be true when this is the first value the user punched in
         if numStartFromBegining {
-            solutionEnv.currentVal = val
+            numObservable.displayVal = val
             numStartFromBegining = false
         } else {
-            solutionEnv.currentVal = solutionEnv.currentVal * 10 + val
+            numObservable.displayVal = numObservable.displayVal * 10 + val
         }
     }
     
-    func addOp() -> Void {
-        solutionEnv.finalSolution += solutionEnv.currentVal
+    func addOperation() -> Void {
+        numObservable.finalSolution += numObservable.displayVal
     }
     
-    func subOp() -> Void {
-        solutionEnv.finalSolution -= solutionEnv.currentVal
+    func subtractOperation() -> Void {
+        numObservable.finalSolution -= numObservable.displayVal
     }
     
-    func divOp() -> Void {
-        solutionEnv.finalSolution /= solutionEnv.currentVal
+    func divideOperation() -> Void {
+        numObservable.finalSolution /= numObservable.displayVal
     }
     
-    func multiplyOp() -> Void {
-        solutionEnv.finalSolution *= solutionEnv.currentVal
+    func multiplyOperation() -> Void {
+        numObservable.finalSolution *= numObservable.displayVal
     }
     
-    func percentOp() -> Void {
-        solutionEnv.currentVal /= 100
+    func percentOperation() -> Void {
+        numObservable.displayVal /= 100
     }
     
-    func clearOp() -> Void {
+    func clearOperation() -> Void {
         numStartFromBegining = true
-        solutionEnv.reset()
+        numObservable.reset()
         previousOp = ""
     }
     
-    func equalsOp() -> Void {
+    func equalsOperation() -> Void {
         do {
-            try operationDelegate(op: previousOp)
+            try operationDelegate(opLabel: previousOp)
         } catch {
             let errorMessage: String = "Operation Delegate recieved an operation that it didn't know what to do with"
             fatalError(errorMessage)
         }
-        print("This is the solution after the operation: \(solutionEnv.finalSolution)")
-        solutionEnv.currentVal = solutionEnv.finalSolution
-        solutionEnv.finalSolution = Double(Int.min)
+        print("This is the solution after the operation: \(numObservable.finalSolution)")
+        numObservable.displayVal = numObservable.finalSolution
+        numObservable.finalSolution = Double(Int.min)
         numStartFromBegining = true
         previousOp = "="
         print("Equals operation")
     }
     
-    func changeSignOp() -> Void {
+    /**
+     Performs the change sign operation on the displayed value
+     - Returns: Void
+     */
+    func changeSignOperation() -> Void {
         
-        if solutionEnv.currentVal > 0 {
-            solutionEnv.currentVal = 0 - solutionEnv.currentVal
+        if numObservable.displayVal > 0 {
+            numObservable.displayVal = 0 - numObservable.displayVal
         } else {
-            solutionEnv.currentVal = abs(solutionEnv.currentVal)
+            numObservable.displayVal = abs(numObservable.displayVal)
         }
     }
     
-    func operationDelegate(op: String) throws ->  Void {
+    /**
+     Accepts an operation label an executes the correspoding operation.
+     - Parameter opLabel: label of the operation
+     - Returns: Void
+     - Throws: InputError.invalidInput
+     */
+    func operationDelegate(opLabel: String) throws ->  Void {
         print("Inside the operation delgate function")
         
-        if op == "C" {
-            self.clearOp()
+        if opLabel == "C" {
+            self.clearOperation()
             return
         }
         
         // Will be true when the user is trying to use the previous solution as the basis for a new equation
-        if previousOp == "="  && op != "="{
-            solutionEnv.finalSolution = solutionEnv.currentVal
-            previousOp = op
+        if previousOp == "="  && opLabel != "="{
+            numObservable.finalSolution = numObservable.displayVal
+            previousOp = opLabel
             return
             // Will be true if the user has not entered a value and hit an operation
-        } else if solutionEnv.finalSolution == Double(Int.min) && solutionEnv.currentVal == 0 {
+        } else if numObservable.finalSolution == Double(Int.min) && numObservable.displayVal == 0 {
             return
         }
         
-        switch op {
+        switch opLabel {
         case "+/-":
-            self.changeSignOp()
+            self.changeSignOperation()
         case "%":
             print("We are about to run the percent op")
-            self.percentOp()
+            self.percentOperation()
         case "=":
-            equalsOp()
+            equalsOperation()
         // Default triggers when doing a math operation
         default:
             print("Looks like we're performing a mathematical operation")
-            previousOp = op
+            previousOp = opLabel
             numStartFromBegining = true
             // Will be true when the user input the first number in an operation
-            if solutionEnv.finalSolution == Double(Int.min) {
-                solutionEnv.finalSolution = solutionEnv.currentVal
-            } else if op == "+"{
-                self.addOp()
-            } else if op == "-" {
-                self.subOp()
-            } else if op == "/" {
-                self.divOp()
-            } else if op == "x" {
-                self.multiplyOp()
+            if numObservable.finalSolution == Double(Int.min) {
+                numObservable.finalSolution = numObservable.displayVal
+            } else if opLabel == "+"{
+                self.addOperation()
+            } else if opLabel == "-" {
+                self.subtractOperation()
+            } else if opLabel == "/" {
+                self.divideOperation()
+            } else if opLabel == "x" {
+                self.multiplyOperation()
             } else {
-                throw InputError.invalidInput(op)
+                throw InputError.invalidInput(opLabel)
             }
         }
     }
@@ -252,7 +277,7 @@ struct HomeView: View {
 
 struct HomeView_Previews: PreviewProvider {
     static var previews: some View {
-        HomeView().environmentObject(SolutionObservable())
+        HomeView().environmentObject(NumObservable())
     }
 }
 
