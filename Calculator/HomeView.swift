@@ -30,16 +30,7 @@ let lightGrayButtons: [String] = ["C", "+/-", "%"]
 /// Buttons that are orange
 let orangeButtons: [String] = ["/", "x", "-", "+", "="]
 
-/// Observable class that encapsulates the values that our math is performed on
-class NumObservable: ObservableObject {
-    @Published var finalSolution: Double = Double(Int.min)
-    @Published var displayVal: Double = 0
-    
-    func reset() -> Void {
-        finalSolution = Double(Int.min)
-        displayVal = 0
-    }
-}
+
 
 extension Color {
     static let lightGray = Color(red: 0.6, green: 0.6, blue: 0.6)
@@ -81,7 +72,7 @@ struct HomeView: View {
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Button(action: {
-                                self.updateOrOperationDelegate(buttonLabel: currentButton)
+                                self.numObservable.updateOrOperationDelegate(buttonLabel: currentButton)
                             }, label: {
                                 Text(currentButton)
                                     .foregroundColor(Color.white)
@@ -121,186 +112,6 @@ struct HomeView: View {
             return 200
         }
         return 100
-    }
-    
-    /**
-     Updates the display text or performs and operation, based on the given text
-     - Parameter buttonLabel: label of the pressed button
-     - Returns: Void
-     */
-    func updateOrOperationDelegate(buttonLabel: String) -> Void {
-        let errorInt: Double = -1
-        let convertedInt: Double = Double(buttonLabel) ?? errorInt
-        
-        if convertedInt == errorInt {
-            // This is to ignore input from user that hit the same button over and over again
-            if buttonLabel == previousButton  && buttonLabel != "+/-"{
-                return
-            }
-            do {
-                try self.operationDelegate(opLabel: buttonLabel)
-            } catch {
-                let errorMessage: String = "Operation Delegate recieved an input that it didn't know what to do with"
-                fatalError(errorMessage)
-            }
-        } else {
-            self.updateDisplayVal(clickedVal: convertedInt)
-        }
-        
-        previousButton = buttonLabel
-    }
-    
-    /**
-     Updates the number being displayed. Called after a user hits a number button
-     - Parameter clickedVal: the value of the button that was just clicked
-     - Returns: Void
-     */
-    func updateDisplayVal(clickedVal: Double) -> Void {
-        
-        // Will be true when this is the first value the user punched in
-        if numStartFromBegining {
-            numObservable.displayVal = clickedVal
-            numStartFromBegining = false
-        } else {
-            numObservable.displayVal = numObservable.displayVal * 10 + clickedVal
-        }
-    }
-    
-    /**
-     Performs the "addition" operation
-     - Returns: Void
-     */
-    func addOperation() -> Void {
-        numObservable.finalSolution += numObservable.displayVal
-    }
-    
-    /**
-     Performs the "subtraction" operation
-     - Returns: Void
-     */
-    func subtractOperation() -> Void {
-        numObservable.finalSolution -= numObservable.displayVal
-    }
-    
-    /**
-     Peforms the "division" operation
-     - Returns: Void
-     */
-    func divideOperation() -> Void {
-        numObservable.finalSolution /= numObservable.displayVal
-    }
-    
-    /**
-     Performs the "multiplication" operation
-     - Returns: Void
-     */
-    func multiplyOperation() -> Void {
-        numObservable.finalSolution *= numObservable.displayVal
-    }
-    
-    /**
-     Performs the "percent" operation.
-     This changes the displayed value to an equivalent percentage value
-     - Returns: Void
-     */
-    func percentOperation() -> Void {
-        numObservable.displayVal /= 100
-    }
-    
-    /**
-     Performs the "clear" operation
-     - Returns: Void
-     */
-    func clearOperation() -> Void {
-        numStartFromBegining = true
-        numObservable.reset()
-        previousOp = ""
-    }
-    
-    /**
-     Performs the "equals" operation.
-     - Returns: Void
-     */
-    func equalsOperation() -> Void {
-        do {
-            try operationDelegate(opLabel: previousOp)
-        } catch {
-            let errorMessage: String = "Operation Delegate recieved an operation that it didn't know what to do with"
-            fatalError(errorMessage)
-        }
-        print("This is the solution after the operation: \(numObservable.finalSolution)")
-        numObservable.displayVal = numObservable.finalSolution
-        numObservable.finalSolution = Double(Int.min)
-        numStartFromBegining = true
-        previousOp = "="
-        print("Equals operation")
-    }
-    
-    /**
-     Performs the change sign operation on the displayed value
-     - Returns: Void
-     */
-    func changeSignOperation() -> Void {
-        
-        if numObservable.displayVal > 0 {
-            numObservable.displayVal = 0 - numObservable.displayVal
-        } else {
-            numObservable.displayVal = abs(numObservable.displayVal)
-        }
-    }
-    
-    /**
-     Accepts an operation label an executes the correspoding operation.
-     - Parameter opLabel: label of the operation
-     - Returns: Void
-     - Throws: InputError.invalidInput
-     */
-    func operationDelegate(opLabel: String) throws ->  Void {
-        print("Inside the operation delgate function")
-        
-        if opLabel == "C" {
-            self.clearOperation()
-            return
-        }
-        
-        // Will be true when the user is trying to use the previous solution as the basis for a new equation
-        if previousOp == "="  && opLabel != "="{
-            numObservable.finalSolution = numObservable.displayVal
-            previousOp = opLabel
-            return
-            // Will be true if the user has not entered a value and hit an operation
-        } else if numObservable.finalSolution == Double(Int.min) && numObservable.displayVal == 0 {
-            return
-        }
-        
-        switch opLabel {
-        case "+/-":
-            self.changeSignOperation()
-        case "%":
-            print("We are about to run the percent op")
-            self.percentOperation()
-        case "=":
-            equalsOperation()
-        // Default triggers when doing a math operation
-        default:
-            print("Looks like we're performing a mathematical operation")
-            previousOp = opLabel
-            numStartFromBegining = true
-            // Will be true when the user input the first number in an operation
-            if numObservable.finalSolution == Double(Int.min) {
-                numObservable.finalSolution = numObservable.displayVal
-            } else if opLabel == "+"{
-                self.addOperation()
-            } else if opLabel == "-" {
-                self.subtractOperation()
-            } else if opLabel == "/" {
-                self.divideOperation()
-            } else if opLabel == "x" {
-                self.multiplyOperation()
-            } else {
-                throw InputError.invalidInput(opLabel)
-            }
-        }
     }
 }
 

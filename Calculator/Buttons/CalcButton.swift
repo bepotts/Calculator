@@ -7,3 +7,16 @@
 //
 
 import Foundation
+import SwiftUI
+
+class CalcButton {
+    var label: String?
+    var color: Color?
+    var action: ()?
+    
+    init(label: String, color: Color = Color.orange, action: ()?) {
+        self.label = label
+        self.color = color
+        self.action = action
+    }
+}
