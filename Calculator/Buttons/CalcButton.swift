@@ -14,7 +14,7 @@ class CalcButton {
     var color: Color?
     var action: ()?
     
-    init(label: String, color: Color = Color.orange, action: ()?) {
+    init(label: String, color: Color = Color.darkGray, action: ()? = nil) {
         self.label = label
         self.color = color
         self.action = action

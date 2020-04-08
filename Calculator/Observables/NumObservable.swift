@@ -14,6 +14,13 @@ class NumObservable: ObservableObject {
     @Published var finalSolution: Double = Double(Int.min)
     @Published var displayVal: Double = 0
     
+    /// Determines whether the display  value should update at 10^0 or higher
+    var numStartFromBegining: Bool = true
+    /// Stores the value of the previous operation
+    var previousOp: String = ""
+    /// Stores the value of the previous pushed button
+    var previousButton: String = ""
+    
     func reset() -> Void {
         finalSolution = Double(Int.min)
         displayVal = 0
@@ -31,7 +38,7 @@ class NumObservable: ObservableObject {
         
         if convertedInt == errorInt {
             // This is to ignore input from user that hit the same button over and over again
-            if buttonLabel == previousButton  && buttonLabel != "+/-"{
+            if buttonLabel == self.previousButton  && buttonLabel != "+/-"{
                 return
             }
             do {
@@ -44,7 +51,7 @@ class NumObservable: ObservableObject {
             self.updateDisplayVal(clickedVal: convertedInt)
         }
         
-        previousButton = buttonLabel
+        self.previousButton = buttonLabel
     }
     
     /**
@@ -55,9 +62,9 @@ class NumObservable: ObservableObject {
     func updateDisplayVal(clickedVal: Double) -> Void {
         
         // Will be true when this is the first value the user punched in
-        if numStartFromBegining {
+        if self.numStartFromBegining {
             self.displayVal = clickedVal
-            numStartFromBegining = false
+            self.numStartFromBegining = false
         } else {
             self.displayVal = self.displayVal * 10 + clickedVal
         }
@@ -109,9 +116,9 @@ class NumObservable: ObservableObject {
      - Returns: Void
      */
     func clearOperation() -> Void {
-        numStartFromBegining = true
+        self.numStartFromBegining = true
         self.reset()
-        previousOp = ""
+        self.previousOp = ""
     }
     
     /**
@@ -120,7 +127,7 @@ class NumObservable: ObservableObject {
      */
     func equalsOperation() -> Void {
         do {
-            try operationDelegate(opLabel: previousOp)
+            try operationDelegate(opLabel: self.previousOp)
         } catch {
             let errorMessage: String = "Operation Delegate recieved an operation that it didn't know what to do with"
             fatalError(errorMessage)
@@ -128,8 +135,8 @@ class NumObservable: ObservableObject {
         print("This is the solution after the operation: \(self.finalSolution)")
         self.displayVal = self.finalSolution
         self.finalSolution = Double(Int.min)
-        numStartFromBegining = true
-        previousOp = "="
+        self.numStartFromBegining = true
+        self.previousOp = "="
         print("Equals operation")
     }
     
@@ -161,9 +168,9 @@ class NumObservable: ObservableObject {
         }
         
         // Will be true when the user is trying to use the previous solution as the basis for a new equation
-        if previousOp == "="  && opLabel != "="{
+        if self.previousOp == "="  && opLabel != "="{
             self.finalSolution = self.displayVal
-            previousOp = opLabel
+            self.previousOp = opLabel
             return
             // Will be true if the user has not entered a value and hit an operation
         } else if self.finalSolution == Double(Int.min) && self.displayVal == 0 {
@@ -181,8 +188,8 @@ class NumObservable: ObservableObject {
         // Default triggers when doing a math operation
         default:
             print("Looks like we're performing a mathematical operation")
-            previousOp = opLabel
-            numStartFromBegining = true
+            self.previousOp = opLabel
+            self.numStartFromBegining = true
             // Will be true when the user input the first number in an operation
             if self.finalSolution == Double(Int.min) {
                 self.finalSolution = self.displayVal

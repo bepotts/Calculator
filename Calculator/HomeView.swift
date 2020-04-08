@@ -18,33 +18,11 @@ let buttons: [[String]] = [
     ["0", ".", "="],
 ]
 
-/// Determines whether the display  value should update at 10^0 or higher
-var numStartFromBegining: Bool = true
-/// Stores the value of the previous operation
-var previousOp: String = ""
-/// Stores the value of the previous pushed button
-var previousButton: String = ""
-
 /// Buttons that are light gray
 let lightGrayButtons: [String] = ["C", "+/-", "%"]
 /// Buttons that are orange
 let orangeButtons: [String] = ["/", "x", "-", "+", "="]
 
-
-
-extension Color {
-    static let lightGray = Color(red: 0.6, green: 0.6, blue: 0.6)
-    static let darkGray = Color(red: 0.2, green: 0.2, blue: 0.2)
-}
-
-extension Double {
-    func truncate(maxDigits: Int = 2)-> String {
-        let formatter = NumberFormatter()
-        formatter.minimumFractionDigits = 0
-        formatter.maximumFractionDigits = maxDigits
-        return formatter.string(from: self as NSNumber) ?? "error"
-    }
-}
 
 /// Error enum that is used for when an unknown value is being processed
 enum InputError: Error {
@@ -54,6 +32,17 @@ enum InputError: Error {
 struct HomeView: View {
     
     @EnvironmentObject var numObservable: NumObservable
+    let calcButtons: [[CalcButton]]
+    
+    init(){
+        self.calcButtons = [
+            [.init(label: "C", color: Color.lightGray), .init(label: "+/-", color: Color.lightGray), .init(label: "%", color: Color.lightGray), .init(label: "/", color: Color.orange) ],
+            [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", color: Color.orange)],
+            [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", color: Color.orange)],
+            [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", color: Color.orange)],
+            [.init(label: "0"), .init(label: "0"), .init(label: "=", color: Color.orange) ]
+        ]
+    }
     
     
     var body: some View {
