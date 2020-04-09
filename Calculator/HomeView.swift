@@ -32,18 +32,14 @@ enum InputError: Error {
 struct HomeView: View {
     
     @EnvironmentObject var numObservable: NumObservable
-    let calcButtons: [[CalcButton]]
-    
-    init(){
-        self.calcButtons = [
-            [.init(label: "C", color: Color.lightGray), .init(label: "+/-", color: Color.lightGray), .init(label: "%", color: Color.lightGray), .init(label: "/", color: Color.orange) ],
-            [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", color: Color.orange)],
-            [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", color: Color.orange)],
-            [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", color: Color.orange)],
-            [.init(label: "0"), .init(label: "0"), .init(label: "=", color: Color.orange) ]
-        ]
-    }
-    
+    let calcButtons: [[CalcButton]] = [
+        [.init(label: "C", color: Color.lightGray), .init(label: "+/-", color: Color.lightGray),
+         .init(label: "%", color: Color.lightGray), .init(label: "/", color: Color.orange) ],
+        [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", color: Color.orange)],
+        [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", color: Color.orange)],
+        [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", color: Color.orange)],
+        [.init(label: "0"), .init(label: "."), .init(label: "=", color: Color.orange) ]
+    ]
     
     var body: some View {
         ZStack(alignment: .bottom){
@@ -57,16 +53,16 @@ struct HomeView: View {
                         .font(.system(size: 50))
                 }
                 
-                ForEach(buttons, id: \.self){ buttonRow in
+                ForEach(self.calcButtons, id: \.self){ buttonRow in
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Button(action: {
-                                self.numObservable.updateOrOperationDelegate(buttonLabel: currentButton)
+                                self.numObservable.updateOrOperationDelegate(buttonLabel: currentButton.label)
                             }, label: {
-                                Text(currentButton)
+                                Text(currentButton.label)
                                     .foregroundColor(Color.white)
-                                    .frame(width: self.generateWidth(buttonLabel: currentButton), height: 100)
-                                    .background(self.colorSelector(buttonLabel: currentButton)).cornerRadius(75)
+                                    .frame(width: self.generateWidth(buttonLabel: currentButton.label), height: 100)
+                                    .background(self.colorSelector(buttonLabel: currentButton.label)).cornerRadius(75)
                             })
                         }
                     }

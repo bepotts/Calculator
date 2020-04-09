@@ -11,6 +11,7 @@ import Foundation
 
 /// Observable class that encapsulates the values that our math is performed on
 class NumObservable: ObservableObject {
+    
     @Published var finalSolution: Double = Double(Int.min)
     @Published var displayVal: Double = 0
     
