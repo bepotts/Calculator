@@ -32,13 +32,13 @@ enum InputError: Error {
 struct HomeView: View {
     
     @EnvironmentObject var numObservable: NumObservable
-    let calcButtons: [[CalcButton]] = [
-        [.init(label: "C", color: Color.lightGray), .init(label: "+/-", color: Color.lightGray),
-         .init(label: "%", color: Color.lightGray), .init(label: "/", color: Color.orange) ],
-        [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", color: Color.orange)],
-        [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", color: Color.orange)],
-        [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", color: Color.orange)],
-        [.init(label: "0"), .init(label: "."), .init(label: "=", color: Color.orange) ]
+    var calcButtons: [[CalcButton]] = [
+        [.init(label: "C", backgroundColor: Color.lightGray), .init(label: "+/-", backgroundColor: Color.lightGray),
+         .init(label: "%", backgroundColor: Color.lightGray), .init(label: "/", backgroundColor: Color.orange, highlightAble: true) ],
+        [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", backgroundColor: Color.orange, highlightAble: true)],
+        [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", backgroundColor: Color.orange, highlightAble: true)],
+        [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", backgroundColor: Color.orange, highlightAble: true)],
+        [.init(label: "0"), .init(label: "."), .init(label: "=", backgroundColor: Color.orange) ]
     ]
     
     var body: some View {
@@ -58,11 +58,12 @@ struct HomeView: View {
                         ForEach(buttonRow, id: \.self){ currentButton in
                             Button(action: {
                                 self.numObservable.updateOrOperationDelegate(buttonLabel: currentButton.label)
+//                                currentButton.checkForHightlight()
                             }, label: {
                                 Text(currentButton.label)
-                                    .foregroundColor(Color.white)
+                                    .foregroundColor(currentButton.foregroundColor)
                                     .frame(width: self.generateWidth(buttonLabel: currentButton.label), height: 100)
-                                    .background(self.colorSelector(buttonLabel: currentButton.label)).cornerRadius(75)
+                                    .background(currentButton.backgroundColor).cornerRadius(75)
                             })
                         }
                     }
