@@ -9,13 +9,44 @@
 import SwiftUI
 
 struct CalcButtonView: View {
+    
+    var calcButton: CalcButton
+    var highlightAble: Bool
+    @State var foregroundColor: Color = Color.white
+    @State var backgroundColor: Color
+    @State private var highlighted: Bool = false
+    
+    @EnvironmentObject var numObservable: NumObservable
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        Button(action: {
+            self.numObservable.updateOrOperationDelegate(buttonLabel: self.calcButton.label)
+            self.toggleHighLight()
+        }, label:{
+            Text(calcButton.label)
+                .background(self.backgroundColor)
+                .foregroundColor(self.foregroundColor)
+                .cornerRadius(75)
+        })
+    }
+    
+    func toggleHighLight() -> Void {
+        
+        if highlightAble {
+            // Will be true when the button is already highlighted
+            if highlighted {
+                self.foregroundColor = Color.orange
+                self.backgroundColor = Color.white
+            } else {
+                self.foregroundColor = Color.white
+                self.backgroundColor = Color.orange
+            }
+        }
     }
 }
 
 struct CalcButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        CalcButtonView()
+        CalcButtonView(calcButton: CalcButton(label: "+"), highlightAble: true, backgroundColor: Color.orange)
     }
 }
