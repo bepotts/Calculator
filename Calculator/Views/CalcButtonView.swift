@@ -11,7 +11,7 @@ import SwiftUI
 struct CalcButtonView: View {
     
     var calcButton: CalcButton
-    var highlightAble: Bool
+    let highlightAble: Bool
     @State var foregroundColor: Color = Color.white
     @State var backgroundColor: Color
     @State private var highlighted: Bool = false
@@ -35,11 +35,13 @@ struct CalcButtonView: View {
         if highlightAble {
             // Will be true when the button is already highlighted
             if highlighted {
-                self.foregroundColor = Color.orange
-                self.backgroundColor = Color.white
-            } else {
                 self.foregroundColor = Color.white
                 self.backgroundColor = Color.orange
+                highlighted = false
+            } else {
+                self.foregroundColor = Color.orange
+                self.backgroundColor = Color.white
+                highlighted = true
             }
         }
     }
