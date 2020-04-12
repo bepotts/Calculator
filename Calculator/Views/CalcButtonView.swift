@@ -11,12 +11,24 @@ import SwiftUI
 struct CalcButtonView: View {
     
     var calcButton: CalcButton
-    let highlightAble: Bool
-    @State var foregroundColor: Color = Color.white
-    @State var backgroundColor: Color
+    var highlightAble: Bool
+    @State var buttonForeground: Color = Color.white
+    @State var buttonBackGround: Color?
     @State private var highlighted: Bool = false
     
     @EnvironmentObject var numObservable: NumObservable
+    
+    init(newCalcButton: CalcButton){
+        let orangeButtons: [String] = ["/", "x", "-", "+", "="]
+        
+        self.highlightAble = false
+        self.calcButton = newCalcButton
+        self.highlighted = false
+        if orangeButtons.contains(self.calcButton.label){
+            self.highlightAble = true
+        }
+        
+    }
     
     var body: some View {
         Button(action: {
@@ -24,10 +36,22 @@ struct CalcButtonView: View {
             self.toggleHighLight()
         }, label:{
             Text(calcButton.label)
-                .background(self.backgroundColor)
-                .foregroundColor(self.foregroundColor)
+                .background(self.buttonBackGround)
+                .foregroundColor(self.buttonForeground)
                 .cornerRadius(75)
-        })
+        }).onAppear {
+            /// Buttons that are light gray
+            let lightGrayButtons: [String] = ["C", "+/-", "%"]
+            /// Buttons that are orange
+            let orangeButtons: [String] = ["/", "x", "-", "+", "="]
+            if lightGrayButtons.contains(self.calcButton.label){
+                self.buttonBackGround = Color.lightGray
+            } else if orangeButtons.contains(self.calcButton.label){
+                self.buttonBackGround = Color.orange
+            } else {
+                self.buttonBackGround = Color.darkGray
+            }
+        }
     }
     
     func toggleHighLight() -> Void {
@@ -35,12 +59,12 @@ struct CalcButtonView: View {
         if highlightAble {
             // Will be true when the button is already highlighted
             if highlighted {
-                self.foregroundColor = Color.white
-                self.backgroundColor = Color.orange
+                self.buttonForeground = Color.white
+                self.buttonBackGround = Color.orange
                 highlighted = false
             } else {
-                self.foregroundColor = Color.orange
-                self.backgroundColor = Color.white
+                self.buttonForeground = Color.orange
+                self.buttonBackGround = Color.white
                 highlighted = true
             }
         }
@@ -49,6 +73,6 @@ struct CalcButtonView: View {
 
 struct CalcButtonView_Previews: PreviewProvider {
     static var previews: some View {
-        CalcButtonView(calcButton: CalcButton(label: "+"), highlightAble: true, backgroundColor: Color.orange)
+        CalcButtonView(newCalcButton: CalcButton(label: "+"))
     }
 }

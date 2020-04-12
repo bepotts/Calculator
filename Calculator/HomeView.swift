@@ -33,12 +33,12 @@ struct HomeView: View {
     
     @EnvironmentObject var numObservable: NumObservable
     var calcButtons: [[CalcButton]] = [
-        [.init(label: "C", backgroundColor: Color.lightGray), .init(label: "+/-", backgroundColor: Color.lightGray),
-         .init(label: "%", backgroundColor: Color.lightGray), .init(label: "/", backgroundColor: Color.orange, highlightAble: true) ],
-        [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x", backgroundColor: Color.orange, highlightAble: true)],
-        [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-", backgroundColor: Color.orange, highlightAble: true)],
-        [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+", backgroundColor: Color.orange, highlightAble: true)],
-        [.init(label: "0"), .init(label: "."), .init(label: "=", backgroundColor: Color.orange) ]
+        [.init(label: "C"), .init(label: "+/-"),
+         .init(label: "%"), .init(label: "/") ],
+        [.init(label: "7"), .init(label: "8"), .init(label: "9"), .init(label: "x")],
+        [.init(label: "4"), .init(label: "5"), .init(label: "6"), .init(label: "-")],
+        [.init(label: "1"), .init(label: "2"), .init(label: "3"), .init(label: "+")],
+        [.init(label: "0"), .init(label: "."), .init(label: "=") ]
     ]
     
     var body: some View {
@@ -56,15 +56,7 @@ struct HomeView: View {
                 ForEach(self.calcButtons, id: \.self){ buttonRow in
                     HStack{
                         ForEach(buttonRow, id: \.self){ currentButton in
-                            Button(action: {
-                                self.numObservable.updateOrOperationDelegate(buttonLabel: currentButton.label)
-//                                currentButton.checkForHightlight()
-                            }, label: {
-                                Text(currentButton.label)
-                                    .foregroundColor(currentButton.foregroundColor)
-                                    .frame(width: self.generateWidth(buttonLabel: currentButton.label), height: 100)
-                                    .background(currentButton.backgroundColor).cornerRadius(75)
-                            })
+                            CalcButtonView(newCalcButton: currentButton)
                         }
                     }
                 }
@@ -72,22 +64,6 @@ struct HomeView: View {
             }.padding(.bottom)
         }
     }
-
-    /**
-     Returns the color of a button based on the value of buttonText
-     - Parameter buttonText: label of the button
-     - Returns: Color of the buttonLabel
-     */
-    func colorSelector(buttonLabel: String) -> Color{
-        if lightGrayButtons.contains(buttonLabel){
-            return Color.lightGray
-        }
-        if orangeButtons.contains(buttonLabel){
-            return Color.orange
-        }
-        return Color.darkGray
-    }
-    
     /**
      Returns the width of a button based on that button's label
      - Parameter buttonLabel: label of the button
