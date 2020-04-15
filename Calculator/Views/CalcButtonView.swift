@@ -12,6 +12,7 @@ struct CalcButtonView: View {
     
     var calcButton: CalcButton
     var highlightAble: Bool
+    var width: CGFloat?
     @State var buttonForeground: Color = Color.white
     @State var buttonBackGround: Color?
     @State private var highlighted: Bool = false
@@ -24,6 +25,7 @@ struct CalcButtonView: View {
         self.highlightAble = false
         self.calcButton = newCalcButton
         self.highlighted = false
+        self.width = (newCalcButton.label == "0" ? 200 : 100)
         if orangeButtons.contains(self.calcButton.label){
             self.highlightAble = true
         }
@@ -36,6 +38,7 @@ struct CalcButtonView: View {
             self.toggleHighLight()
         }, label:{
             Text(calcButton.label)
+                .frame(width: self.width, height: 100)
                 .background(self.buttonBackGround)
                 .foregroundColor(self.buttonForeground)
                 .cornerRadius(75)
