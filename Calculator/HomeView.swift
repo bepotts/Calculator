@@ -9,21 +9,6 @@
 import SwiftUI
 
 
-/// Represents the layout of the calculator buttons
-let buttons: [[String]] = [
-    ["C", "+/-", "%", "/"],
-    ["7", "8", "9", "x"],
-    ["4", "5", "6", "-"],
-    ["1", "2", "3", "+"],
-    ["0", ".", "="],
-]
-
-/// Buttons that are light gray
-let lightGrayButtons: [String] = ["C", "+/-", "%"]
-/// Buttons that are orange
-let orangeButtons: [String] = ["/", "x", "-", "+", "="]
-
-
 /// Error enum that is used for when an unknown value is being processed
 enum InputError: Error {
     case invalidInput(String)
@@ -63,17 +48,6 @@ struct HomeView: View {
                 
             }.padding(.bottom)
         }
-    }
-    /**
-     Returns the width of a button based on that button's label
-     - Parameter buttonLabel: label of the button
-     - Returns: width of the given button
-     */
-    func generateWidth(buttonLabel: String) -> CGFloat {
-        if buttonLabel == "0" {
-            return 200
-        }
-        return 100
     }
 }
 
